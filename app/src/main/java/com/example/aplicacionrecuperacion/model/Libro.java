@@ -14,9 +14,9 @@ public class Libro {
 
     private boolean prestado;
 
-    private String prestadoString;
+    private String nombrePrestado;
 
-    private String prestadoNumero;
+    private String numeroPrestado;
 
     private LocalDateTime fechaRetorno;
 
