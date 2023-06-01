@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">AplicacionRecuperacion</string>
+    <string name="modificar">Modificar</string>
+    <string name="finalizar">Finalizar</string>
+    <string name="insertar">Insertar</string>
+    <string name="inserte_su_primer_libro">Inserte su primer libro</string>
+    <string name="listado_de_libros">Listado de Libros</string>
 </resources>
