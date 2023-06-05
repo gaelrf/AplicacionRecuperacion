@@ -88,7 +88,7 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
                 libro.setAutor(cursor.getString(2));
                 libro.setMio(cursor.getInt(3));
                 libro.setPrestado(cursor.getInt(4));
-                libro.setEstado(cursor.getString(5));
+                libro.setEstado(cursor.getInt(5));
                 libro.setNombrePrestado(cursor.getString(6));
                 libro.setNumeroPrestado(cursor.getString(7));
                 libro.setAnhoRetorno(cursor.getInt(8));

@@ -6,12 +6,12 @@
     android:gravity="center_horizontal">
 
     <EditText
-        android:id="@+id/txtTitulo"
+        android:id="@+id/etxTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Titulo del libro"/>
     <EditText
-        android:id="@+id/txtAutor"
+        android:id="@+id/etxAutor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Autor del libro"/>
@@ -35,26 +35,29 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <RadioButton
+            android:id="@+id/rbtPendiente"
             android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pendiente"/>
         <RadioButton
+            android:id="@+id/rbtLeyendo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Leyendo"/>
         <RadioButton
+            android:id="@+id/rbtLeido"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Leído"/>
     </RadioGroup>
     <EditText
-        android:id="@+id/txtEntidadPrestado"
+        android:id="@+id/etxEntidadPrestado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
     <EditText
-        android:id="@+id/txtTelefonoPrestado"
+        android:id="@+id/etxTelefonoPrestado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
@@ -66,7 +69,7 @@
         android:calendarViewShown="false"
         android:visibility="gone"/>
     <EditText
-        android:id="@+id/txtPagina"
+        android:id="@+id/etxPagina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="number"
@@ -78,7 +81,7 @@
         android:entries="@array/array_valoracion"
         android:visibility="gone"/>
     <EditText
-        android:id="@+id/txtComentario"
+        android:id="@+id/etxComentario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
@@ -88,8 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:datePickerMode="spinner"
-        android:calendarViewShown="false"
-        android:visibility="gone"/>
+        android:calendarViewShown="false"/>
     <Button
         android:id="@+id/btnVolver"
         android:layout_width="wrap_content"
@@ -113,6 +115,12 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:text="Buscar"/>
+    <Button
+        android:id="@+id/btnLlamar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Llamar"/>
 
 
 
