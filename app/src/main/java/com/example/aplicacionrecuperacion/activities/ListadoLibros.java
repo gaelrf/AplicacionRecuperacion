@@ -27,7 +27,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListadoLibros extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class ListadoLibros extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, DialogInterface.OnDismissListener {
 
     private static final int CODIGO_VISUALIZAR = 1;
     private static final int CODIGO_INSERTAR = 2;
@@ -108,8 +108,6 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
 
 
             }while (cursor.moveToNext());
-            AdaptadorLibro adaptadorLibro=new AdaptadorLibro(this,R.layout.layout_lista_libros,libros);
-            librosBinding.lstLibros.setAdapter(adaptadorLibro);
 
         }else {
 
@@ -118,6 +116,8 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
             librosBinding.btnSinLibros.setOnClickListener(this);
 
         }
+        AdaptadorLibro adaptadorLibro=new AdaptadorLibro(this,R.layout.layout_lista_libros,libros);
+        librosBinding.lstLibros.setAdapter(adaptadorLibro);
 
         database.close();
     }
@@ -173,8 +173,9 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
                         dialog.cancel();
                     }
                 });
-                ventana.show();
-
+                AlertDialog dialog =  ventana.create();
+                dialog.setOnDismissListener(this);
+                dialog.show();
 
         }
 
@@ -256,4 +257,8 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
 
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        listarLibros();
+    }
 }
