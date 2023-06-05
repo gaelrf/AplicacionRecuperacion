@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.example.aplicacionrecuperacion.R;
 import com.example.aplicacionrecuperacion.adapters.AdaptadorLibro;
@@ -32,8 +35,6 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
 
     List<Libro> libros;
     BaseDatosLibros datosLibros;
-    //private final String[] COLUMNAS = {"titulo","autor","mio","prestado","estado","nombre_prestado",
-    //        "numero_prestado","pagina","fecha_retorno","valoracion","comentario","fecha_lectura"};
     ActivityListadoLibrosBinding librosBinding;
 
     @Override
@@ -43,6 +44,7 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
         librosBinding = ActivityListadoLibrosBinding.inflate(getLayoutInflater());
         View view = librosBinding.getRoot();
         setContentView(view);
+        registerForContextMenu(librosBinding.lstLibros);
     }
 
     @Override
@@ -145,9 +147,33 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
         int i = info.position;
         switch (item.getItemId()){
             case R.id.opcModificar:
+                Intent intent = new Intent(this,DatosLibro.class);
+                intent.putExtra("intencion",CODIGO_MODIFICAR);
+                intent.putExtra("libro", (Libro) librosBinding.lstLibros.getAdapter().getItem(i));
+                startActivityForResult(intent,CODIGO_MODIFICAR);
 
 
             case R.id.opcBorrar:
+                AlertDialog.Builder ventana = new AlertDialog.Builder(this);
+                ventana.setTitle("Borrar");
+                Libro libro = (Libro) librosBinding.lstLibros.getAdapter().getItem(i);
+                ventana.setMessage("Seguro que desea borrar "+libro.getTitulo());
+                ventana.setCancelable(false);
+                ventana.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SQLiteDatabase database = datosLibros.getWritableDatabase();
+                    database.delete("libro","id="+libro.getId(),null);
+                    }
+
+                });
+                ventana.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                ventana.show();
 
 
         }
@@ -187,6 +213,43 @@ public class ListadoLibros extends AppCompatActivity implements View.OnClickList
         switch (requestCode){
 
             case CODIGO_MODIFICAR:
+
+                if (resultCode==RESULT_OK){
+
+                    if (data.getBooleanExtra("realizado",false)) {
+
+                        if (data.getIntExtra("modificar", 0)==1) {
+
+                            Toast.makeText(this, "Libro modificado satisfactoriamente", Toast.LENGTH_SHORT).show();
+
+                        } else {
+
+                            Toast.makeText(this, "Error al modificar", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    }
+
+                }
+            case CODIGO_INSERTAR:
+
+                if (resultCode==RESULT_OK){
+
+                    if (data.getBooleanExtra("realizado",false)) {
+
+                        if (data.getLongExtra("guardar", -1)!=-1) {
+
+                            Toast.makeText(this, "Libro guardado satisfactoriamente", Toast.LENGTH_SHORT).show();
+
+                        } else {
+
+                            Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    }
+
+                }
 
 
         }

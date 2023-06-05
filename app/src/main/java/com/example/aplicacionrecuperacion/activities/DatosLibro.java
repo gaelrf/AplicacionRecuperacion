@@ -16,11 +16,12 @@ import com.example.aplicacionrecuperacion.conection.BaseDatosLibros;
 import com.example.aplicacionrecuperacion.databinding.ActivityDatosLibroBinding;
 import com.example.aplicacionrecuperacion.model.Libro;
 
-public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemClickListener, RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
+public class DatosLibro extends AppCompatActivity implements AdapterView.OnClickListener, RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
 
     Intent recibido;
     ActivityDatosLibroBinding libroBinding;
     BaseDatosLibros datosLibros;
+    Libro libro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
         recibido = getIntent();
 
         int intencion = recibido.getIntExtra("intencion",2);
-        Libro libro = (Libro) recibido.getSerializableExtra("libro");
+        libro = (Libro) recibido.getSerializableExtra("libro");
 
         switch (intencion){
 
@@ -49,6 +50,20 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
 
         vivibilidad(intencion);
 
+        setListeners();
+
+
+    }
+
+    private void setListeners() {
+
+        libroBinding.btnGuardar.setOnClickListener(this);
+        libroBinding.btnBuscar.setOnClickListener(this);
+        libroBinding.btnLlamar.setOnClickListener(this);
+        libroBinding.btnModificar.setOnClickListener(this);
+        libroBinding.btnVolver.setOnClickListener(this);
+        libroBinding.chkPrestado.setOnCheckedChangeListener(this);
+        libroBinding.rgpEstado.setOnCheckedChangeListener(this);
 
     }
 
@@ -67,7 +82,8 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
         libroBinding.etxTelefonoPrestado.setText(libro.getNumeroPrestado());
         libroBinding.dpkFechaPrestado.updateDate(libro.getAnhoRetorno(),libro.getMesRetorno(),libro.getDiaRetorno());
         libroBinding.dpkFechaLectura.updateDate(libro.getAnhoLectura(),libro.getMesLectura(),libro.getDiaLectura());
-        libroBinding.etxPagina.setText(libro.getPagina());
+        String pagina = String.valueOf(libro.getPagina());
+        libroBinding.etxPagina.setText(pagina);
         libroBinding.spnValoracion.setSelection(libro.getValoracion());
         libroBinding.etxComentario.setText(libro.getValoracionString());
 
@@ -126,52 +142,56 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
 
     }
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onClick(View v) {
 
         Intent intent;
-        switch (view.getId()){
+        switch (v.getId()){
 
             case R.id.btnVolver:
                 intent = new Intent();
-                intent.putExtra("realizado", 0);
+                intent.putExtra("realizado", false);
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
             case R.id.btnGuardar:
-                guardar();
+                long guardar = guardar();
                 intent =new Intent();
-                intent.putExtra("realizado", 1);
+                intent.putExtra("realizado", true);
+                intent.putExtra("guardar", guardar);
                 setResult(RESULT_OK, intent);
                 finish();
                 break;
             case R.id.btnModificar:
-                modificar();
+                int modificar = modificar();
                 intent =new Intent();
-                intent.putExtra("realizado", 1);
+                intent.putExtra("realizado", true);
+
                 setResult(RESULT_OK, intent);
                 finish();
+                break;
+            case R.id.btnLlamar:
+
 
 
         }
 
     }
 
-    public void guardar(){
+    public long guardar(){
 
         datosLibros = new BaseDatosLibros(this, "libros.db", null, 1);
         SQLiteDatabase datos = datosLibros.getWritableDatabase();
         ContentValues nuevoRegistro = leerFormulario();
-        datos.insert("libro",null,nuevoRegistro);
+        return datos.insert("libro",null,nuevoRegistro);
 
     }
 
-    public void modificar(){
+    public int modificar(){
 
         datosLibros = new BaseDatosLibros(this, "libros.db", null, 1);
         SQLiteDatabase datos = datosLibros.getWritableDatabase();
         ContentValues registroModificado = leerFormulario();
-        Libro libro = (Libro) recibido.getSerializableExtra("libro");
-        datos.update("libro",registroModificado,"id = "+ libro.getId(),null);
+        return datos.update("libro",registroModificado,"id = "+ libro.getId(),null);
 
     }
 
@@ -192,7 +212,8 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
         registro.put("mes_lectura", libroBinding.dpkFechaLectura.getMonth());
         registro.put("dia_lectura", libroBinding.dpkFechaLectura.getDayOfMonth());
         registro.put("pagina",libroBinding.etxPagina.getEditableText().toString());
-        registro.put("caloracion",libroBinding.spnValoracion.getSelectedItemPosition());
+        registro.put("valoracion",libroBinding.spnValoracion.getSelectedItemPosition());
+        registro.put("comentario",libroBinding.etxComentario.getText().toString());
         return registro;
 
     }
@@ -207,8 +228,28 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
                 libroBinding.dpkFechaLectura.setVisibility(View.VISIBLE);
                 libroBinding.etxPagina.setVisibility(View.GONE);
                 libroBinding.etxPagina.setText(null);
-
-
+                libroBinding.spnValoracion.setVisibility(View.GONE);
+                libroBinding.spnValoracion.setSelection(0);
+                libroBinding.etxComentario.setVisibility(View.GONE);
+                libroBinding.etxComentario.setText(null);
+                break;
+            case R.id.rbtLeyendo:
+                libroBinding.dpkFechaLectura.setVisibility(View.GONE);
+                libroBinding.dpkFechaLectura.updateDate(1,1,1);
+                libroBinding.etxPagina.setVisibility(View.VISIBLE);
+                libroBinding.spnValoracion.setVisibility(View.GONE);
+                libroBinding.spnValoracion.setSelection(0);
+                libroBinding.etxComentario.setVisibility(View.GONE);
+                libroBinding.etxComentario.setText(null);
+                break;
+            case R.id.rbtLeido:
+                libroBinding.dpkFechaLectura.setVisibility(View.GONE);
+                libroBinding.dpkFechaLectura.updateDate(1,1,1);
+                libroBinding.etxPagina.setVisibility(View.GONE);
+                libroBinding.etxPagina.setText(null);
+                libroBinding.spnValoracion.setVisibility(View.VISIBLE);
+                libroBinding.etxComentario.setVisibility(View.VISIBLE);
+                break;
         }
 
     }
@@ -217,7 +258,21 @@ public class DatosLibro extends AppCompatActivity implements AdapterView.OnItemC
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
+        if (b){
 
+            libroBinding.etxEntidadPrestado.setVisibility(View.VISIBLE);
+            libroBinding.etxTelefonoPrestado.setVisibility(View.VISIBLE);
+
+        }else {
+
+            libroBinding.etxEntidadPrestado.setVisibility(View.GONE);
+            libroBinding.etxEntidadPrestado.setText(null);
+            libroBinding.etxTelefonoPrestado.setVisibility(View.GONE);
+            libroBinding.etxTelefonoPrestado.setText(null);
+
+        }
 
     }
+
+
 }
